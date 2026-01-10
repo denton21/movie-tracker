@@ -3,20 +3,30 @@
 import { useState, useTransition } from 'react';
 import { addFriend, removeFriend, selectFriendForCompare } from '@/actions/friends';
 
+interface FriendProfile {
+    id: string;
+    username: string;
+    avatar_url: string | null;
+}
+
 interface Friend {
     id: number;
     friend_id: string;
     created_at: string;
-    friend: {
-        id: string;
-        username: string;
-        avatar_url: string | null;
-    };
+    friend: FriendProfile | FriendProfile[];
 }
 
 interface FriendsListProps {
     friends: Friend[];
     selectedFriendId: string | null;
+}
+
+// Хелпер для получения данных друга (Supabase может вернуть массив или объект)
+function getFriendData(friend: FriendProfile | FriendProfile[]): FriendProfile | null {
+    if (Array.isArray(friend)) {
+        return friend[0] || null;
+    }
+    return friend;
 }
 
 export default function FriendsList({ friends, selectedFriendId }: FriendsListProps) {
@@ -62,50 +72,55 @@ export default function FriendsList({ friends, selectedFriendId }: FriendsListPr
             )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {friends.map((item) => (
-                    <div
-                        key={item.id}
-                        className={`relative p-4 rounded-2xl border transition-all ${selectedFriendId === item.friend_id
-                                ? 'bg-purple-500/20 border-purple-500/50'
-                                : 'bg-white/5 border-white/10 hover:border-white/20'
-                            }`}
-                    >
-                        <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-orange-500 rounded-xl flex items-center justify-center text-xl">
-                                👤
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <h3 className="text-white font-medium truncate">
-                                    {item.friend.username}
-                                </h3>
-                                {selectedFriendId === item.friend_id && (
-                                    <span className="text-purple-400 text-xs">
-                                        Выбран для сравнения
-                                    </span>
-                                )}
-                            </div>
-                        </div>
+                {friends.map((item) => {
+                    const friendData = getFriendData(item.friend);
+                    if (!friendData) return null;
 
-                        <div className="flex gap-2 mt-4">
-                            {selectedFriendId !== item.friend_id && (
+                    return (
+                        <div
+                            key={item.id}
+                            className={`relative p-4 rounded-2xl border transition-all ${selectedFriendId === item.friend_id
+                                    ? 'bg-purple-500/20 border-purple-500/50'
+                                    : 'bg-white/5 border-white/10 hover:border-white/20'
+                                }`}
+                        >
+                            <div className="flex items-center gap-3">
+                                <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-orange-500 rounded-xl flex items-center justify-center text-xl">
+                                    👤
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="text-white font-medium truncate">
+                                        {friendData.username}
+                                    </h3>
+                                    {selectedFriendId === item.friend_id && (
+                                        <span className="text-purple-400 text-xs">
+                                            Выбран для сравнения
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="flex gap-2 mt-4">
+                                {selectedFriendId !== item.friend_id && (
+                                    <button
+                                        onClick={() => handleSelect(item.friend_id)}
+                                        disabled={isPending}
+                                        className="flex-1 px-3 py-2 bg-purple-500/20 text-purple-400 rounded-lg text-sm hover:bg-purple-500/30 transition-colors disabled:opacity-50"
+                                    >
+                                        Выбрать
+                                    </button>
+                                )}
                                 <button
-                                    onClick={() => handleSelect(item.friend_id)}
+                                    onClick={() => handleRemove(item.friend_id)}
                                     disabled={isPending}
-                                    className="flex-1 px-3 py-2 bg-purple-500/20 text-purple-400 rounded-lg text-sm hover:bg-purple-500/30 transition-colors disabled:opacity-50"
+                                    className="px-3 py-2 bg-red-500/20 text-red-400 rounded-lg text-sm hover:bg-red-500/30 transition-colors disabled:opacity-50"
                                 >
-                                    Выбрать
+                                    Удалить
                                 </button>
-                            )}
-                            <button
-                                onClick={() => handleRemove(item.friend_id)}
-                                disabled={isPending}
-                                className="px-3 py-2 bg-red-500/20 text-red-400 rounded-lg text-sm hover:bg-red-500/30 transition-colors disabled:opacity-50"
-                            >
-                                Удалить
-                            </button>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         </div>
     );
