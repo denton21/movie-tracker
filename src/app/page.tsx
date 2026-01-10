@@ -32,7 +32,7 @@ export default function HomePage() {
     }
   };
 
-  const handleSave = async (status: WatchStatus, season: number, episode: number) => {
+  const handleSave = async (status: WatchStatus, season: number, episode: number, rating: number | null) => {
     if (!selectedMedia || !mediaDetails) return;
 
     const title = getMediaTitle(selectedMedia);
@@ -55,7 +55,8 @@ export default function HomePage() {
       isTV ? (tvDetails.episode_run_time?.[0] || 45) : (mediaDetails as TMDBMovieDetails).runtime,
       status,
       season,
-      episode
+      episode,
+      rating
     );
 
     setShowModal(false);
