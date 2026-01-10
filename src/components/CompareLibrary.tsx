@@ -2,22 +2,14 @@
 
 import { useState } from 'react';
 import CompareMediaCard from './CompareMediaCard';
-import type { Media } from '@/types';
+import type { Media, UserMedia } from '@/types';
 
 type MediaFilter = 'all' | 'movie' | 'tv';
 
-interface UserMediaData {
-    id: number;
-    status: string;
-    user_rating: number | null;
-    current_season?: number;
-    current_episode?: number;
-}
-
 interface CompareItem {
     media: Media;
-    user1: UserMediaData | null;
-    user2: UserMediaData | null;
+    user1: UserMedia | null;
+    user2: UserMedia | null;
 }
 
 interface CompareLibraryProps {
@@ -47,8 +39,8 @@ export default function CompareLibrary({ items }: CompareLibraryProps) {
                     <button
                         onClick={() => setFilter('all')}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filter === 'all'
-                                ? 'bg-purple-500 text-white'
-                                : 'bg-white/10 text-white/60 hover:bg-white/20'
+                            ? 'bg-purple-500 text-white'
+                            : 'bg-white/10 text-white/60 hover:bg-white/20'
                             }`}
                     >
                         Все ({items.length})
@@ -56,8 +48,8 @@ export default function CompareLibrary({ items }: CompareLibraryProps) {
                     <button
                         onClick={() => setFilter('movie')}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filter === 'movie'
-                                ? 'bg-blue-500 text-white'
-                                : 'bg-white/10 text-white/60 hover:bg-white/20'
+                            ? 'bg-blue-500 text-white'
+                            : 'bg-white/10 text-white/60 hover:bg-white/20'
                             }`}
                     >
                         🎬 Фильмы ({moviesCount})
@@ -65,8 +57,8 @@ export default function CompareLibrary({ items }: CompareLibraryProps) {
                     <button
                         onClick={() => setFilter('tv')}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filter === 'tv'
-                                ? 'bg-purple-500 text-white'
-                                : 'bg-white/10 text-white/60 hover:bg-white/20'
+                            ? 'bg-purple-500 text-white'
+                            : 'bg-white/10 text-white/60 hover:bg-white/20'
                             }`}
                     >
                         📺 Сериалы ({tvCount})
