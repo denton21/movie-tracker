@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎬 MovieTracker
 
-## Getting Started
+Приложение для совместного отслеживания фильмов и сериалов с другом.
 
-First, run the development server:
+## ⚡ Быстрый старт
+
+### 1. Установка зависимостей
+
+```bash
+cd movie-tracker
+npm install
+```
+
+### 2. Настройка Supabase
+
+1. Откройте [Supabase Dashboard](https://supabase.com/dashboard)
+2. Создайте новый проект (или используйте существующий)
+3. Перейдите в **SQL Editor** и выполните скрипт из файла `supabase-setup.sql`
+4. Скопируйте данные из **Settings → API**:
+   - Project URL
+   - anon public key
+
+### 3. Переменные окружения
+
+Создайте файл `.env.local` в корне проекта:
+
+```env
+TMDB_API_KEY=ваш_tmdb_ключ
+NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1N...
+```
+
+### 4. Запуск
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Откройте http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 👥 Создание пользователей
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Откройте `/login`
+2. Зарегистрируйте первого пользователя
+3. Выйдите и зарегистрируйте второго пользователя (друга)
 
-## Learn More
+Теперь вы можете видеть библиотеки друг друга!
 
-To learn more about Next.js, take a look at the following resources:
+## 🚀 Деплой на Vercel
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Push проект на GitHub
+2. Импортируйте в [Vercel](https://vercel.com)
+3. Добавьте Environment Variables:
+   - `TMDB_API_KEY`
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+4. Deploy!
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📱 Функционал
 
-## Deploy on Vercel
+- 🔍 Поиск фильмов и сериалов через TMDB
+- 📚 Личная библиотека с категориями
+- 👤 Библиотека друга
+- 📊 Страница сравнения прогресса
+- 📈 Прогресс-бары для сериалов
+- 📱 Адаптивный дизайн
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🛠 Технологии
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Next.js 14 (App Router)
+- TypeScript
+- Tailwind CSS
+- Supabase (Auth + Database)
+- TMDB API
