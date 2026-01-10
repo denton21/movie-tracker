@@ -28,6 +28,7 @@ export default function StatusSelector({
     const [episode, setEpisode] = useState(initialEpisode);
     const [rating, setRating] = useState<number | null>(initialRating);
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const isTVShow = media.media_type === 'tv';
     const showProgress = isTVShow && (status === 'watching' || status === 'dropped');
@@ -35,10 +36,12 @@ export default function StatusSelector({
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
+        setError(null);
         try {
             await onSave(status, season, episode, rating);
-        } catch (error) {
-            console.error('Ошибка сохранения:', error);
+        } catch (err) {
+            console.error('Ошибка сохранения:', err);
+            setError(err instanceof Error ? err.message : 'Не удалось сохранить. Попробуйте ещё раз.');
         } finally {
             setIsLoading(false);
         }
@@ -149,8 +152,8 @@ export default function StatusSelector({
                                 type="button"
                                 onClick={() => setRating(rating === value ? null : value)}
                                 className={`w-8 h-8 rounded-lg text-sm font-medium transition-all ${rating !== null && value <= rating
-                                        ? 'bg-yellow-500 text-white'
-                                        : 'bg-white/10 text-white/60 hover:bg-white/20'
+                                    ? 'bg-yellow-500 text-white'
+                                    : 'bg-white/10 text-white/60 hover:bg-white/20'
                                     }`}
                             >
                                 {value}
@@ -162,6 +165,13 @@ export default function StatusSelector({
                             ⭐ {rating}/10
                         </p>
                     )}
+                </div>
+            )}
+
+            {/* Ошибка */}
+            {error && (
+                <div className="p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-300 text-sm">
+                    {error}
                 </div>
             )}
 

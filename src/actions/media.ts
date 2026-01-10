@@ -53,7 +53,7 @@ export async function addToLibrary(
     }
 
     // Проверяем, есть ли уже это медиа в базе
-    let { data: existingMedia } = await supabase
+    const { data: existingMedia } = await supabase
         .from('media')
         .select('id')
         .eq('tmdb_id', tmdbId)
@@ -81,28 +81,62 @@ export async function addToLibrary(
             .select('id')
             .single();
 
-        if (mediaError) throw mediaError;
+        if (mediaError) {
+            console.error('Error creating media:', mediaError, { tmdbId, mediaType, title });
+            throw new Error(`Не удалось добавить "${title}" в базу: ${mediaError.message}`);
+        }
+        if (!newMedia) {
+            throw new Error(`Не удалось добавить "${title}" в базу: данные не получены`);
+        }
         mediaId = newMedia.id;
     } else {
         mediaId = existingMedia.id;
     }
 
-    // Добавляем или обновляем запись user_media
-    const { error: userMediaError } = await supabase
+    // Проверяем, есть ли уже запись user_media для этого пользователя и медиа
+    const { data: existingUserMedia } = await supabase
         .from('user_media')
-        .upsert({
-            user_id: user.id,
-            media_id: mediaId,
-            status,
-            current_season: currentSeason,
-            current_episode: currentEpisode,
-            user_rating: userRating,
-            updated_at: new Date().toISOString(),
-        }, {
-            onConflict: 'user_id,media_id',
-        });
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('media_id', mediaId)
+        .single();
 
-    if (userMediaError) throw userMediaError;
+    if (existingUserMedia) {
+        // Обновляем существующую запись
+        const { error: updateError } = await supabase
+            .from('user_media')
+            .update({
+                status,
+                current_season: currentSeason,
+                current_episode: currentEpisode,
+                user_rating: userRating,
+                updated_at: new Date().toISOString(),
+            })
+            .eq('id', existingUserMedia.id);
+
+        if (updateError) {
+            console.error('Error updating user_media:', updateError);
+            throw new Error(`Не удалось обновить статус: ${updateError.message}`);
+        }
+    } else {
+        // Создаём новую запись
+        const { error: insertError } = await supabase
+            .from('user_media')
+            .insert({
+                user_id: user.id,
+                media_id: mediaId,
+                status,
+                current_season: currentSeason,
+                current_episode: currentEpisode,
+                user_rating: userRating,
+                updated_at: new Date().toISOString(),
+            });
+
+        if (insertError) {
+            console.error('Error inserting user_media:', insertError);
+            throw new Error(`Не удалось сохранить в библиотеку: ${insertError.message}`);
+        }
+    }
 
     revalidatePath('/library');
     revalidatePath('/compare');

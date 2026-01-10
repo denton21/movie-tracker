@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { getComparisonData } from '@/actions/media';
-import CompareMediaCard from '@/components/CompareMediaCard';
+import CompareLibrary from '@/components/CompareLibrary';
 import ProgressBar from '@/components/ProgressBar';
 
 export default async function ComparePage() {
@@ -101,30 +101,8 @@ export default async function ComparePage() {
                     </div>
                 </div>
 
-                {/* Общая библиотека */}
-                <h2 className="text-xl font-semibold text-white mb-6">
-                    Общая библиотека ({items.length})
-                </h2>
-
-                {items.length > 0 ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
-                        {items.map((item) => (
-                            <CompareMediaCard
-                                key={item.media.id}
-                                media={item.media}
-                                userMedia={item.user1}
-                                friendMedia={item.user2}
-                            />
-                        ))}
-                    </div>
-                ) : (
-                    <div className="text-center py-16">
-                        <div className="text-6xl mb-4">🎬</div>
-                        <p className="text-white/60">
-                            Пока никто ничего не добавил
-                        </p>
-                    </div>
-                )}
+                {/* Общая библиотека с фильтрами */}
+                <CompareLibrary items={items} />
             </div>
         </div>
     );
