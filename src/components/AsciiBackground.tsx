@@ -62,7 +62,7 @@ export default function AsciiBackground() {
                     const wave = Math.sin((x + y + frame * 0.02) * 0.1) * 0.1 + 0.1;
                     const finalOpacity = Math.min(cell.opacity + wave, 0.5);
 
-                    ctx.fillStyle = `rgba(168, 85, 247, ${finalOpacity})`;
+                    ctx.fillStyle = `rgba(255, 255, 255, ${finalOpacity})`;
                     ctx.fillText(cell.char, x * fontSize * 0.6, y * fontSize);
                 }
             }
@@ -82,7 +82,7 @@ export default function AsciiBackground() {
         <canvas
             ref={canvasRef}
             className="fixed inset-0 pointer-events-none z-0"
-            style={{ opacity: 0.5 }}
+            style={{ opacity: 0.05 }}
         />
     );
 }
