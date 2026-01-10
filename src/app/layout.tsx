@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
+import AsciiBackground from "@/components/AsciiBackground";
 
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
@@ -21,8 +22,9 @@ export default function RootLayout({
   return (
     <html lang="ru" suppressHydrationWarning>
       <body suppressHydrationWarning className={`${inter.variable} font-sans antialiased bg-gray-950 text-white min-h-screen`}>
+        <AsciiBackground />
         <Navigation />
-        <main className="pt-16">
+        <main className="pt-16 relative z-10">
           {children}
         </main>
       </body>
