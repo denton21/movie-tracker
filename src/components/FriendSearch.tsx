@@ -1,20 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { searchUsers, updateSelectedFriend } from '@/actions/friends';
+import { searchUsers, addFriend } from '@/actions/friends';
 import type { Profile } from '@/types';
 
 interface FriendSearchProps {
     onFriendSelected?: () => void;
+    existingFriendIds?: string[];
 }
 
-export default function FriendSearch({ onFriendSelected }: FriendSearchProps) {
+export default function FriendSearch({ onFriendSelected, existingFriendIds = [] }: FriendSearchProps) {
     const router = useRouter();
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<Partial<Profile>[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [isPending, startTransition] = useTransition();
+    const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
 
     const handleSearch = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -36,19 +39,21 @@ export default function FriendSearch({ onFriendSelected }: FriendSearchProps) {
         }
     };
 
-    const handleSelect = async (friendId: string) => {
-        setLoading(true);
-        try {
-            await updateSelectedFriend(friendId);
-            router.refresh();
-            if (onFriendSelected) onFriendSelected();
-        } catch (err) {
-            setError('не удалось выбрать друга');
-            console.error(err);
-        } finally {
-            setLoading(false);
-        }
+    const handleAddFriend = async (friendId: string) => {
+        startTransition(async () => {
+            try {
+                await addFriend(friendId);
+                setAddedIds(prev => new Set([...prev, friendId]));
+                router.refresh();
+                if (onFriendSelected) onFriendSelected();
+            } catch (err) {
+                setError('Не удалось добавить друга');
+                console.error(err);
+            }
+        });
     };
+
+    const isFriendAdded = (id: string) => existingFriendIds.includes(id) || addedIds.has(id);
 
     return (
         <div className="w-full max-w-2xl mx-auto glass rounded-2xl p-6">
@@ -88,13 +93,19 @@ export default function FriendSearch({ onFriendSelected }: FriendSearchProps) {
                             </div>
                             <span className="text-white font-medium">{user.username}</span>
                         </div>
-                        <button
-                            onClick={() => handleSelect(user.id!)}
-                            disabled={loading}
-                            className="text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors"
-                        >
-                            Выбрать
-                        </button>
+                        {isFriendAdded(user.id!) ? (
+                            <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-lg text-sm">
+                                ✓ В друзьях
+                            </span>
+                        ) : (
+                            <button
+                                onClick={() => handleAddFriend(user.id!)}
+                                disabled={isPending}
+                                className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+                            >
+                                {isPending ? '...' : '+ Добавить'}
+                            </button>
+                        )}
                     </div>
                 ))}
             </div>

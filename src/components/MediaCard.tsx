@@ -62,14 +62,21 @@ export default function MediaCard({
                 {/* Статус пользователя */}
                 {statusConfig && (
                     <div className={`absolute bottom-16 left-3 right-3 px-3 py-2 rounded-xl ${statusConfig.bgColor} backdrop-blur-sm`}>
-                        <span className={`text-sm font-medium ${statusConfig.color}`}>
-                            {statusConfig.label}
-                        </span>
-                        {userMedia && media.media_type === 'tv' && userMedia.status === 'watching' && (
-                            <span className="text-white/60 text-sm ml-2">
-                                S{userMedia.current_season}:E{userMedia.current_episode}
+                        <div className="flex items-center justify-between">
+                            <span className={`text-sm font-medium ${statusConfig.color}`}>
+                                {statusConfig.label}
+                                {userMedia && media.media_type === 'tv' && userMedia.status === 'watching' && (
+                                    <span className="text-white/60 text-sm ml-2">
+                                        S{userMedia.current_season}:E{userMedia.current_episode}
+                                    </span>
+                                )}
                             </span>
-                        )}
+                            {userMedia?.user_rating && (
+                                <span className="text-yellow-400 text-sm font-medium">
+                                    ⭐ {userMedia.user_rating}
+                                </span>
+                            )}
+                        </div>
                     </div>
                 )}
 
