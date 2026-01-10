@@ -20,19 +20,19 @@ export async function signIn(formData: FormData) {
 
     const supabase = await createClient();
 
-    // Сначала ищем пользователя по username чтобы получить его email
+    // Сначала ищем пользователя по username чтобы получить его email (без учёта регистра)
     const { data: profile } = await supabase
         .from('profiles')
-        .select('id')
-        .eq('username', username)
+        .select('id, username')
+        .ilike('username', username)
         .single();
 
     if (!profile) {
         return { error: 'Пользователь не найден.' };
     }
 
-    // Пробуем войти с сгенерированным email
-    const email = generateEmail(username);
+    // Пробуем войти с сгенерированным email (используем username из БД для правильного регистра)
+    const email = generateEmail(profile.username);
 
     const { error } = await supabase.auth.signInWithPassword({
         email,
