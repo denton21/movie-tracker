@@ -20,30 +20,39 @@ export async function signIn(formData: FormData) {
 
     const supabase = await createClient();
 
-    // Сначала ищем пользователя по username чтобы получить его email (без учёта регистра)
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('id, username')
-        .ilike('username', username)
-        .single();
+    // Генерируем email на основе username
+    const email = generateEmail(username);
 
-    if (!profile) {
-        return { error: 'Пользователь не найден.' };
-    }
-
-    // Пробуем войти с сгенерированным email (используем username из БД для правильного регистра)
-    const email = generateEmail(profile.username);
-
-    const { error } = await supabase.auth.signInWithPassword({
+    // Пробуем войти напрямую
+    const { data: authData, error } = await supabase.auth.signInWithPassword({
         email,
         password,
     });
 
     if (error) {
         if (error.message.includes('Invalid login credentials')) {
-            return { error: 'Неверный пароль.' };
+            return { error: 'Неверное имя пользователя или пароль.' };
         }
         return { error: error.message };
+    }
+
+    // Если вход успешен, проверяем есть ли профиль
+    if (authData.user) {
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('id', authData.user.id)
+            .single();
+
+        // Если профиля нет — создаём его
+        if (!profile) {
+            await supabase
+                .from('profiles')
+                .insert({
+                    id: authData.user.id,
+                    username: username,
+                });
+        }
     }
 
     redirect('/library');
