@@ -24,6 +24,7 @@ export async function addToLibrary(
     userRating: number | null = null,
     isPrivate: boolean = false
 ) {
+    console.log('addToLibrary called with isPrivate:', isPrivate);
     const supabase = await createClient();
 
     // Проверяем авторизацию
