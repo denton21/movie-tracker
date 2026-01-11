@@ -221,24 +221,33 @@ export async function removeFromLibrary(userMediaId: number) {
 export async function getUserLibrary(userId?: string) {
     const supabase = await createClient();
 
+    // Получаем текущего пользователя
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+
     let targetUserId = userId;
+    const isViewingOwnLibrary = !userId || userId === currentUser?.id;
 
     if (!targetUserId) {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
+        if (!currentUser) {
             throw new Error('Необходима авторизация');
         }
-        targetUserId = user.id;
+        targetUserId = currentUser.id;
     }
 
-    const { data, error } = await supabase
+    let query = supabase
         .from('user_media')
         .select(`
       *,
       media (*)
     `)
-        .eq('user_id', targetUserId)
-        .order('updated_at', { ascending: false });
+        .eq('user_id', targetUserId);
+
+    // Если смотрим чужую библиотеку — скрываем приватные записи
+    if (!isViewingOwnLibrary) {
+        query = query.eq('is_private', false);
+    }
+
+    const { data, error } = await query.order('updated_at', { ascending: false });
 
     if (error) throw error;
 
