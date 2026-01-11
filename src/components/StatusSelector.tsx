@@ -123,7 +123,7 @@ export default function StatusSelector({
                                 <input
                                     type="number"
                                     min={1}
-                                    max={99}
+                                    max={9999}
                                     value={episode}
                                     onChange={(e) => setEpisode(Math.max(1, parseInt(e.target.value) || 1))}
                                     className="flex-1 px-3 py-2 bg-white/10 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-purple-500"

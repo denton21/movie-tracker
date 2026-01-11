@@ -62,7 +62,6 @@ export default function HomePage() {
     setShowModal(false);
     setSelectedMedia(null);
     setMediaDetails(null);
-    router.push('/library');
   };
 
   return (
