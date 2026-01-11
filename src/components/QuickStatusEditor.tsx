@@ -49,7 +49,7 @@ export default function QuickStatusEditor({ media, userMedia, onClose }: QuickSt
                 finalSeason,
                 finalEpisode,
                 rating,
-                isPrivate
+                isPrivate ? 1 : 0  // Передаём как number для надёжной сериализации
             );
             router.refresh();
             onClose();

@@ -58,7 +58,7 @@ export default function HomePage() {
       season,
       episode,
       rating,
-      isPrivate
+      isPrivate ? 1 : 0  // Передаём как number для надёжной сериализации
     );
 
     setShowModal(false);

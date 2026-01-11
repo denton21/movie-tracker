@@ -22,9 +22,9 @@ export async function addToLibrary(
     currentSeason: number = 1,
     currentEpisode: number = 1,
     userRating: number | null = null,
-    isPrivate: boolean = false
+    isPrivate: number = 0  // 0 = false, 1 = true (для надёжной сериализации)
 ) {
-    console.log('addToLibrary called with isPrivate:', isPrivate);
+    const isPrivateBool = isPrivate === 1;
     const supabase = await createClient();
 
     // Проверяем авторизацию
@@ -112,7 +112,7 @@ export async function addToLibrary(
                 current_season: currentSeason,
                 current_episode: currentEpisode,
                 user_rating: userRating,
-                is_private: isPrivate,
+                is_private: isPrivateBool,
                 updated_at: new Date().toISOString(),
             })
             .eq('id', existingUserMedia.id);
@@ -132,7 +132,7 @@ export async function addToLibrary(
                 current_season: currentSeason,
                 current_episode: currentEpisode,
                 user_rating: userRating,
-                is_private: isPrivate,
+                is_private: isPrivateBool,
                 updated_at: new Date().toISOString(),
             });
 

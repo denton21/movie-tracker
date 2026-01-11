@@ -40,7 +40,6 @@ export default function StatusSelector({
         e.preventDefault();
         setIsLoading(true);
         setError(null);
-        console.log('handleSubmit called with isPrivate:', isPrivate);
         try {
             await onSave(status, season, episode, rating, isPrivate);
         } catch (err) {
@@ -191,10 +190,7 @@ export default function StatusSelector({
                 </div>
                 <button
                     type="button"
-                    onClick={() => {
-                        console.log('Toggle clicked, current isPrivate:', isPrivate, '-> setting to:', !isPrivate);
-                        setIsPrivate(!isPrivate);
-                    }}
+                    onClick={() => setIsPrivate(!isPrivate)}
                     className={`relative w-12 h-6 rounded-full transition-colors ${isPrivate ? 'bg-purple-500' : 'bg-white/20'}`}
                 >
                     <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform ${isPrivate ? 'translate-x-6' : ''}`} />
