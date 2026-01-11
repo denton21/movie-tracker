@@ -320,3 +320,40 @@ export async function getComparisonData() {
         items,
     };
 }
+
+/**
+ * Получить карту статусов пользователя для быстрого поиска
+ * Возвращает объект: { "movie-123": "watching", "tv-456": "completed" }
+ */
+export async function getUserLibraryStatusMap() {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return {};
+
+    const { data } = await supabase
+        .from('user_media')
+        .select(`
+            status,
+            media (
+                tmdb_id,
+                media_type
+            )
+        `)
+        .eq('user_id', user.id);
+
+    if (!data) return {};
+
+    const statusMap: Record<string, WatchStatus> = {};
+
+    data.forEach((item) => {
+        // @ts-ignore - Типизация join в supabase иногда сложная
+        const media = item.media;
+        if (media && media.tmdb_id && media.media_type) {
+            const key = `${media.media_type}-${media.tmdb_id}`;
+            statusMap[key] = item.status;
+        }
+    });
+
+    return statusMap;
+}

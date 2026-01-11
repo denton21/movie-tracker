@@ -5,8 +5,8 @@ import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { getImageUrl, getMediaTitle, getMediaYear } from '@/lib/tmdb';
 import { getMediaDetailsAction } from '@/actions/tmdb';
-import { addToLibrary } from '@/actions/media';
-import type { TMDBSearchResult, TMDBMovieDetails, TMDBTVDetails, WatchStatus } from '@/types';
+import { addToLibrary, getUserLibraryStatusMap } from '@/actions/media';
+import { type TMDBSearchResult, type TMDBMovieDetails, type TMDBTVDetails, type WatchStatus, STATUS_CONFIG } from '@/types';
 import StatusSelector from '@/components/StatusSelector';
 
 function SearchContent() {
@@ -16,9 +16,15 @@ function SearchContent() {
     const [results, setResults] = useState<TMDBSearchResult[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isModalLoading, setIsModalLoading] = useState(false);
+    const [libraryMap, setLibraryMap] = useState<Record<string, WatchStatus>>({});
     const [selectedMedia, setSelectedMedia] = useState<TMDBSearchResult | null>(null);
     const [mediaDetails, setMediaDetails] = useState<TMDBMovieDetails | TMDBTVDetails | null>(null);
     const [showModal, setShowModal] = useState(false);
+
+    // Загружаем статусы медиа пользователя
+    useEffect(() => {
+        getUserLibraryStatusMap().then(setLibraryMap);
+    }, []);
 
     // Поиск при изменении query
     useEffect(() => {
@@ -81,6 +87,12 @@ function SearchContent() {
             isPrivate ? 1 : 0
         );
 
+        // Обновляем локальный стейт статусов
+        setLibraryMap(prev => ({
+            ...prev,
+            [`${selectedMedia.media_type}-${selectedMedia.id}`]: status
+        }));
+
         // НЕ редиректим — просто закрываем модалку
         setShowModal(false);
         setSelectedMedia(null);
@@ -119,56 +131,76 @@ function SearchContent() {
                     </div>
                 ) : results.length > 0 ? (
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
-                        {results.map((item) => (
-                            <div
-                                key={`${item.media_type}-${item.id}`}
-                                onClick={() => handleSelect(item)}
-                                className="group cursor-pointer"
-                            >
-                                <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-white/5">
-                                    <Image
-                                        src={getImageUrl(item.poster_path, 'w342')}
-                                        alt={getMediaTitle(item)}
-                                        fill
-                                        unoptimized
-                                        className="object-cover transition-transform duration-300 group-hover:scale-110"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                        {results.map((item) => {
+                            const itemKey = `${item.media_type}-${item.id}`;
+                            const itemStatus = libraryMap[itemKey];
+                            const statusLabel = itemStatus ? STATUS_CONFIG[itemStatus]?.label : null;
+                            const statusColor = itemStatus ? STATUS_CONFIG[itemStatus]?.color : null;
+                            const statusBg = itemStatus ? STATUS_CONFIG[itemStatus]?.bgColor : null;
 
-                                    {/* Тип контента */}
-                                    <div className={`absolute top-2 left-2 px-2 py-1 rounded-lg text-xs font-medium ${item.media_type === 'movie'
-                                            ? 'bg-blue-500/80 text-white'
-                                            : 'bg-purple-500/80 text-white'
-                                        }`}>
-                                        {item.media_type === 'movie' ? 'Фильм' : 'Сериал'}
-                                    </div>
+                            return (
+                                <div
+                                    key={itemKey}
+                                    onClick={() => handleSelect(item)}
+                                    className="group cursor-pointer"
+                                >
+                                    <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-white/5">
+                                        <Image
+                                            src={getImageUrl(item.poster_path, 'w342')}
+                                            alt={getMediaTitle(item)}
+                                            fill
+                                            unoptimized
+                                            className="object-cover transition-transform duration-300 group-hover:scale-110"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
-                                    {/* Рейтинг */}
-                                    {item.vote_average > 0 && (
-                                        <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 rounded-lg bg-black/60 text-sm">
-                                            <span className="text-yellow-400">★</span>
-                                            <span className="text-white">{item.vote_average.toFixed(1)}</span>
+                                        {/* Тип контента и статус */}
+                                        <div className="absolute top-2 left-2 flex flex-col gap-2 items-start">
+                                            <div className={`px-2 py-1 rounded-lg text-xs font-medium ${item.media_type === 'movie'
+                                                    ? 'bg-blue-500/80 text-white'
+                                                    : 'bg-purple-500/80 text-white'
+                                                }`}>
+                                                {item.media_type === 'movie' ? 'Фильм' : 'Сериал'}
+                                            </div>
+
+                                            {/* Статус в библиотеке */}
+                                            {itemStatus && (
+                                                <div className={`px-2 py-1 rounded-lg text-xs font-medium text-white border border-white/20 shadow-lg backdrop-blur-md ${statusBg || 'bg-green-500/80'}`}>
+                                                    {statusLabel}
+                                                </div>
+                                            )}
                                         </div>
-                                    )}
 
-                                    {/* Кнопка добавления */}
-                                    <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button className="w-full py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm font-medium transition-colors">
-                                            Добавить
-                                        </button>
+                                        {/* Рейтинг */}
+                                        {item.vote_average > 0 && (
+                                            <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 rounded-lg bg-black/60 text-sm">
+                                                <span className="text-yellow-400">★</span>
+                                                <span className="text-white">{item.vote_average.toFixed(1)}</span>
+                                            </div>
+                                        )}
+
+                                        {/* Кнопка добавления */}
+                                        <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button className={`w-full py-2 text-white rounded-lg text-sm font-medium transition-colors ${itemStatus
+                                                    ? 'bg-white/20 hover:bg-white/30 backdrop-blur-md'
+                                                    : 'bg-purple-500 hover:bg-purple-600'
+                                                }`}>
+                                                {itemStatus ? 'Изменить' : 'Добавить'}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-2">
+                                        <h3 className="text-white font-medium text-sm line-clamp-2">
+                                            {getMediaTitle(item)}
+                                        </h3>
+                                        <p className="text-white/50 text-xs mt-1">
+                                            {getMediaYear(item)}
+                                        </p>
                                     </div>
                                 </div>
-
-                                <div className="mt-2">
-                                    <h3 className="text-white font-medium text-sm line-clamp-2">
-                                        {getMediaTitle(item)}
-                                    </h3>
-                                    <p className="text-white/50 text-xs mt-1">
-                                        {getMediaYear(item)}
-                                    </p>
-                                </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 ) : query ? (
                     <div className="text-center py-20">
@@ -237,6 +269,7 @@ function SearchContent() {
                                     runtime: selectedMedia.media_type === 'movie' ? (mediaDetails as TMDBMovieDetails).runtime : (mediaDetails as TMDBTVDetails).episode_run_time?.[0] || null,
                                     created_at: new Date().toISOString()
                                 }}
+                                initialStatus={libraryMap[`${selectedMedia.media_type}-${selectedMedia.id}`]}
                                 onSave={handleSave}
                                 onCancel={() => setShowModal(false)}
                             />
