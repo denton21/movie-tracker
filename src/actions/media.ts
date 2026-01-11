@@ -290,15 +290,17 @@ export async function getComparisonData() {
         .order('created_at', { ascending: false });
 
     const items = (allMedia || []).map(media => {
-        const user1Data = media.user_media.find((um: { user_id: string }) => um.user_id === profiles[0].id);
+        const user1DataRaw = media.user_media.find((um: { user_id: string }) => um.user_id === profiles[0].id);
         const user2DataRaw = media.user_media.find((um: { user_id: string }) => um.user_id === profiles[1].id);
-        // Скрываем приватные записи друга
-        const user2Data = user2DataRaw?.is_private ? null : user2DataRaw;
+
+        // Свои данные всегда видны, приватные записи друга скрыты
+        const user1Data = user1DataRaw || null;
+        const user2Data = user2DataRaw?.is_private ? null : (user2DataRaw || null);
 
         return {
             media,
-            user1: user1Data || null,
-            user2: user2Data || null,
+            user1: user1Data,
+            user2: user2Data,
         };
     }).filter(item => item.user1 || item.user2);
 
