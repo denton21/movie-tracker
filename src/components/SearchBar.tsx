@@ -60,10 +60,18 @@ export default function SearchBar({ onSelect, onQueryChange }: SearchBarProps) {
         setIsOpen(false);
     };
 
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (query.trim().length >= 2) {
+            // Переход на страницу поиска по Enter
+            window.location.href = `/search?q=${encodeURIComponent(query.trim())}`;
+        }
+    };
+
     return (
         <div ref={containerRef} className="relative w-full max-w-2xl mx-auto">
             {/* Поле ввода */}
-            <div className="relative">
+            <form onSubmit={handleSubmit} className="relative">
                 <input
                     type="text"
                     value={query}
@@ -71,7 +79,7 @@ export default function SearchBar({ onSelect, onQueryChange }: SearchBarProps) {
                         setQuery(e.target.value);
                         onQueryChange?.(e.target.value);
                     }}
-                    placeholder="Поиск фильмов и сериалов..."
+                    placeholder="Поиск фильмов и сериалов... (Enter для расширенного поиска)"
                     className="w-full px-6 py-4 text-lg bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                 />
 
@@ -85,7 +93,7 @@ export default function SearchBar({ onSelect, onQueryChange }: SearchBarProps) {
                         </svg>
                     )}
                 </div>
-            </div>
+            </form>
 
             {/* Выпадающий список результатов */}
             {isOpen && results.length > 0 && (
@@ -136,14 +144,17 @@ export default function SearchBar({ onSelect, onQueryChange }: SearchBarProps) {
                         </button>
                     ))}
                 </div>
-            )}
+            )
+            }
 
             {/* Нет результатов */}
-            {isOpen && results.length === 0 && query.length >= 2 && !isLoading && (
-                <div className="absolute w-full mt-2 p-4 bg-gray-900/95 backdrop-blur-md border border-white/10 rounded-2xl text-center text-white/60">
-                    Ничего не найдено
-                </div>
-            )}
-        </div>
+            {
+                isOpen && results.length === 0 && query.length >= 2 && !isLoading && (
+                    <div className="absolute w-full mt-2 p-4 bg-gray-900/95 backdrop-blur-md border border-white/10 rounded-2xl text-center text-white/60">
+                        Ничего не найдено
+                    </div>
+                )
+            }
+        </div >
     );
 }
