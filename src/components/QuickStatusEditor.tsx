@@ -85,8 +85,8 @@ export default function QuickStatusEditor({ media, userMedia, onClose }: QuickSt
                                 key={key}
                                 onClick={() => setStatus(key)}
                                 className={`p-3 rounded-xl border-2 transition-all text-sm font-medium ${status === key
-                                        ? `${config.bgColor} border-current ${config.color}`
-                                        : 'border-white/10 text-white/60 hover:border-white/30'
+                                    ? `${config.bgColor} border-current ${config.color}`
+                                    : 'border-white/10 text-white/60 hover:border-white/30'
                                     }`}
                             >
                                 {config.label}
@@ -95,18 +95,18 @@ export default function QuickStatusEditor({ media, userMedia, onClose }: QuickSt
                     )}
                 </div>
 
-                {/* Быстрый выбор оценки (только для просмотренных) */}
-                {status === 'completed' && (
+                {/* Быстрый выбор оценки (необязательно, для всех кроме "В планах") */}
+                {status !== 'planned' && (
                     <div className="mb-4">
-                        <p className="text-white/60 text-sm mb-2">Оценка</p>
+                        <p className="text-white/60 text-sm mb-2">Оценка (необязательно)</p>
                         <div className="flex gap-1 justify-center">
                             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
                                 <button
                                     key={value}
                                     onClick={() => setRating(rating === value ? null : value)}
                                     className={`w-8 h-8 rounded-lg text-sm font-medium transition-all ${rating !== null && value <= rating
-                                            ? 'bg-yellow-500 text-white'
-                                            : 'bg-white/10 text-white/60 hover:bg-white/20'
+                                        ? 'bg-yellow-500 text-white'
+                                        : 'bg-white/10 text-white/60 hover:bg-white/20'
                                         }`}
                                 >
                                     {value}

@@ -84,9 +84,11 @@ export default function HomePage() {
           </div>
 
           {/* Подсказка */}
-          <p className={`mt-6 text-white/40 text-sm animate-fade-in-up delay-300 select-none pointer-events-none transition-opacity duration-300 ${searchQuery ? 'opacity-0' : 'opacity-100'}`}>
-            Введите название фильма или сериала для поиска
-          </p>
+          {!searchQuery && (
+            <p className="mt-6 text-white/40 text-sm animate-fade-in-up delay-300 select-none pointer-events-none">
+              Введите название фильма или сериала для поиска
+            </p>
+          )}
         </div>
       </section>
 
