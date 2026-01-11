@@ -40,6 +40,7 @@ export default function StatusSelector({
         e.preventDefault();
         setIsLoading(true);
         setError(null);
+        console.log('handleSubmit called with isPrivate:', isPrivate);
         try {
             await onSave(status, season, episode, rating, isPrivate);
         } catch (err) {
