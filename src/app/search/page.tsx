@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
-import { getImageUrl, getMediaTitle, getMediaYear, fetchMediaDetails } from '@/lib/tmdb';
+import { getImageUrl, getMediaTitle, getMediaYear, getMediaDetails } from '@/lib/tmdb';
 import { addToLibrary } from '@/actions/media';
 import type { TMDBSearchResult, TMDBMovieDetails, TMDBTVDetails, WatchStatus } from '@/types';
 import StatusSelector from '@/components/StatusSelector';
@@ -40,7 +40,7 @@ export default function SearchPage() {
     const handleSelect = async (item: TMDBSearchResult) => {
         setSelectedMedia(item);
         try {
-            const details = await fetchMediaDetails(item.id, item.media_type);
+            const details = await getMediaDetails(item.id, item.media_type);
             setMediaDetails(details);
             setShowModal(true);
         } catch (error) {
@@ -124,8 +124,8 @@ export default function SearchPage() {
 
                                     {/* Тип контента */}
                                     <div className={`absolute top-2 left-2 px-2 py-1 rounded-lg text-xs font-medium ${item.media_type === 'movie'
-                                            ? 'bg-blue-500/80 text-white'
-                                            : 'bg-purple-500/80 text-white'
+                                        ? 'bg-blue-500/80 text-white'
+                                        : 'bg-purple-500/80 text-white'
                                         }`}>
                                         {item.media_type === 'movie' ? 'Фильм' : 'Сериал'}
                                     </div>
