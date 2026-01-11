@@ -96,7 +96,8 @@ export default function StatusSelector({
                                     min={1}
                                     max={media.total_seasons || 99}
                                     value={season}
-                                    onChange={(e) => setSeason(Math.max(1, parseInt(e.target.value) || 1))}
+                                    onChange={(e) => setSeason(parseInt(e.target.value) || 0)}
+                                    onBlur={() => setSeason(Math.max(1, season))}
                                     className="flex-1 px-3 py-2 bg-white/10 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-purple-500"
                                 />
                                 <button
@@ -125,7 +126,8 @@ export default function StatusSelector({
                                     min={1}
                                     max={9999}
                                     value={episode}
-                                    onChange={(e) => setEpisode(Math.max(1, parseInt(e.target.value) || 1))}
+                                    onChange={(e) => setEpisode(parseInt(e.target.value) || 0)}
+                                    onBlur={() => setEpisode(Math.max(1, episode))}
                                     className="flex-1 px-3 py-2 bg-white/10 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-purple-500"
                                 />
                                 <button
@@ -141,10 +143,10 @@ export default function StatusSelector({
                 </div>
             )}
 
-            {/* Оценка (для просмотренных) */}
-            {status === 'completed' && (
+            {/* Оценка (необязательно, для всех кроме "В планах") */}
+            {status !== 'planned' && (
                 <div className="space-y-3 p-4 bg-white/5 rounded-xl">
-                    <p className="text-white/80 font-medium">Ваша оценка</p>
+                    <p className="text-white/80 font-medium">Ваша оценка <span className="text-white/40 font-normal">(необязательно)</span></p>
                     <div className="flex gap-1 justify-center">
                         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
                             <button
