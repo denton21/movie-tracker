@@ -2,10 +2,15 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { getUserLibrary } from '@/actions/media';
 import MediaCard from '@/components/MediaCard';
-import type { UserMediaWithDetails } from '@/types';
+import type { UserMediaWithDetails, WatchStatus } from '@/types';
 import LibraryFilters from './LibraryFilters';
 
-export default async function LibraryPage() {
+interface PageProps {
+    searchParams: Promise<{ status?: WatchStatus; rating?: string }>;
+}
+
+export default async function LibraryPage({ searchParams }: PageProps) {
+    const params = await searchParams;
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -19,16 +24,27 @@ export default async function LibraryPage() {
         .eq('id', user.id)
         .single();
 
-    const items = await getUserLibrary() as UserMediaWithDetails[];
+    const allItems = await getUserLibrary() as UserMediaWithDetails[];
 
-    // Статистика
+    // Статистика (по всем элементам)
     const stats = {
-        total: items.length,
-        completed: items.filter(i => i.status === 'completed').length,
-        watching: items.filter(i => i.status === 'watching').length,
-        dropped: items.filter(i => i.status === 'dropped').length,
-        planned: items.filter(i => i.status === 'planned').length,
+        total: allItems.length,
+        completed: allItems.filter(i => i.status === 'completed').length,
+        watching: allItems.filter(i => i.status === 'watching').length,
+        dropped: allItems.filter(i => i.status === 'dropped').length,
+        planned: allItems.filter(i => i.status === 'planned').length,
     };
+
+    // Фильтрация по статусу
+    let items = params.status
+        ? allItems.filter(i => i.status === params.status)
+        : allItems;
+
+    // Фильтрация по пользовательской оценке
+    if (params.rating) {
+        const rating = parseInt(params.rating);
+        items = items.filter(i => i.user_rating === rating);
+    }
 
     return (
         <div className="min-h-screen py-8 px-4">

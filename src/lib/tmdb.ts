@@ -84,22 +84,26 @@ export type BackdropSize = 'w300' | 'w780' | 'w1280' | 'original';
 
 /**
  * Получить полный URL изображения
+ * Использует прокси для обхода гео-блокировки TMDB
  */
 export function getImageUrl(path: string | null | undefined, size: ImageSize = 'w500'): string {
     if (!path || path.trim() === '') {
         return '/placeholder-poster.svg';
     }
-    return `${TMDB_IMAGE_BASE}/${size}${path}`;
+    // Используем прокси для обхода гео-блокировки
+    return `/api/image?path=${encodeURIComponent(path)}&size=${size}`;
 }
 
 /**
  * Получить URL фона
+ * Использует прокси для обхода гео-блокировки TMDB
  */
 export function getBackdropUrl(path: string | null, size: BackdropSize = 'w1280'): string {
     if (!path) {
         return '/placeholder-backdrop.svg';
     }
-    return `${TMDB_IMAGE_BASE}/${size}${path}`;
+    // Используем прокси для обхода гео-блокировки
+    return `/api/image?path=${encodeURIComponent(path)}&size=${size}`;
 }
 
 /**
