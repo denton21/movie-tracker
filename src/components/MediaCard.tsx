@@ -59,37 +59,40 @@ export default function MediaCard({
                     </div>
                 )}
 
-                {/* Статус пользователя */}
-                {statusConfig && (
-                    <div className={`absolute bottom-16 left-3 right-3 px-3 py-2 rounded-xl ${statusConfig.bgColor} backdrop-blur-sm`}>
-                        <div className="flex items-center justify-between">
-                            <span className={`text-sm font-medium ${statusConfig.color}`}>
-                                {statusConfig.label}
-                                {userMedia && media.media_type === 'tv' && userMedia.status === 'watching' && (
-                                    <span className="text-white/60 text-sm ml-2">
-                                        S{userMedia.current_season}:E{userMedia.current_episode}
+                {/* Информация внизу - статус + название */}
+                <div className="absolute bottom-0 left-0 right-0 p-4 flex flex-col gap-2">
+                    {/* Статус пользователя */}
+                    {statusConfig && (
+                        <div className={`px-3 py-2 rounded-xl ${statusConfig.bgColor} backdrop-blur-sm`}>
+                            <div className="flex items-center justify-between gap-2">
+                                <span className={`text-sm font-medium ${statusConfig.color} truncate`}>
+                                    {statusConfig.label}
+                                    {userMedia && media.media_type === 'tv' && userMedia.status === 'watching' && (
+                                        <span className="text-white/60 text-sm ml-2">
+                                            S{userMedia.current_season}:E{userMedia.current_episode}
+                                        </span>
+                                    )}
+                                </span>
+                                {userMedia?.user_rating && (
+                                    <span className="text-yellow-400 text-sm font-medium whitespace-nowrap">
+                                        ⭐ {userMedia.user_rating}
                                     </span>
                                 )}
-                            </span>
-                            {userMedia?.user_rating && (
-                                <span className="text-yellow-400 text-sm font-medium">
-                                    ⭐ {userMedia.user_rating}
-                                </span>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Название и год */}
+                    <div>
+                        <h3 className="text-white font-semibold text-lg line-clamp-2 mb-1">
+                            {media.title}
+                        </h3>
+                        <div className="flex items-center gap-2 text-white/60 text-sm">
+                            {media.release_year && <span>{media.release_year}</span>}
+                            {media.media_type === 'tv' && media.total_seasons && (
+                                <span>• {media.total_seasons} сезон{media.total_seasons > 1 ? (media.total_seasons < 5 ? 'а' : 'ов') : ''}</span>
                             )}
                         </div>
-                    </div>
-                )}
-
-                {/* Информация внизу */}
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <h3 className="text-white font-semibold text-lg line-clamp-2 mb-1">
-                        {media.title}
-                    </h3>
-                    <div className="flex items-center gap-2 text-white/60 text-sm">
-                        {media.release_year && <span>{media.release_year}</span>}
-                        {media.media_type === 'tv' && media.total_seasons && (
-                            <span>• {media.total_seasons} сезон{media.total_seasons > 1 ? (media.total_seasons < 5 ? 'а' : 'ов') : ''}</span>
-                        )}
                     </div>
                 </div>
             </div>
