@@ -33,7 +33,7 @@ export default function HomePage() {
     }
   };
 
-  const handleSave = async (status: WatchStatus, season: number, episode: number, rating: number | null) => {
+  const handleSave = async (status: WatchStatus, season: number, episode: number, rating: number | null, isPrivate: boolean) => {
     if (!selectedMedia || !mediaDetails) return;
 
     const title = getMediaTitle(selectedMedia);
@@ -57,7 +57,8 @@ export default function HomePage() {
       status,
       season,
       episode,
-      rating
+      rating,
+      isPrivate
     );
 
     setShowModal(false);

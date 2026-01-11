@@ -21,7 +21,8 @@ export async function addToLibrary(
     status: WatchStatus,
     currentSeason: number = 1,
     currentEpisode: number = 1,
-    userRating: number | null = null
+    userRating: number | null = null,
+    isPrivate: boolean = false
 ) {
     const supabase = await createClient();
 
@@ -110,6 +111,7 @@ export async function addToLibrary(
                 current_season: currentSeason,
                 current_episode: currentEpisode,
                 user_rating: userRating,
+                is_private: isPrivate,
                 updated_at: new Date().toISOString(),
             })
             .eq('id', existingUserMedia.id);
@@ -129,6 +131,7 @@ export async function addToLibrary(
                 current_season: currentSeason,
                 current_episode: currentEpisode,
                 user_rating: userRating,
+                is_private: isPrivate,
                 updated_at: new Date().toISOString(),
             });
 
@@ -288,7 +291,9 @@ export async function getComparisonData() {
 
     const items = (allMedia || []).map(media => {
         const user1Data = media.user_media.find((um: { user_id: string }) => um.user_id === profiles[0].id);
-        const user2Data = media.user_media.find((um: { user_id: string }) => um.user_id === profiles[1].id);
+        const user2DataRaw = media.user_media.find((um: { user_id: string }) => um.user_id === profiles[1].id);
+        // Скрываем приватные записи друга
+        const user2Data = user2DataRaw?.is_private ? null : user2DataRaw;
 
         return {
             media,

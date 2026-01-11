@@ -10,7 +10,8 @@ interface StatusSelectorProps {
     initialSeason?: number;
     initialEpisode?: number;
     initialRating?: number | null;
-    onSave: (status: WatchStatus, season: number, episode: number, rating: number | null) => Promise<void>;
+    initialIsPrivate?: boolean;
+    onSave: (status: WatchStatus, season: number, episode: number, rating: number | null, isPrivate: boolean) => Promise<void>;
     onCancel?: () => void;
 }
 
@@ -20,6 +21,7 @@ export default function StatusSelector({
     initialSeason = 1,
     initialEpisode = 1,
     initialRating = null,
+    initialIsPrivate = false,
     onSave,
     onCancel,
 }: StatusSelectorProps) {
@@ -27,6 +29,7 @@ export default function StatusSelector({
     const [season, setSeason] = useState(initialSeason);
     const [episode, setEpisode] = useState(initialEpisode);
     const [rating, setRating] = useState<number | null>(initialRating);
+    const [isPrivate, setIsPrivate] = useState(initialIsPrivate);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -38,7 +41,7 @@ export default function StatusSelector({
         setIsLoading(true);
         setError(null);
         try {
-            await onSave(status, season, episode, rating);
+            await onSave(status, season, episode, rating, isPrivate);
         } catch (err) {
             console.error('Ошибка сохранения:', err);
             setError(err instanceof Error ? err.message : 'Не удалось сохранить. Попробуйте ещё раз.');
@@ -176,6 +179,23 @@ export default function StatusSelector({
                     {error}
                 </div>
             )}
+
+            {/* Приватность */}
+            <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl">
+                <div className="flex items-center gap-2">
+                    <svg className="w-5 h-5 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    <span className="text-white/80">Скрыть от друзей</span>
+                </div>
+                <button
+                    type="button"
+                    onClick={() => setIsPrivate(!isPrivate)}
+                    className={`relative w-12 h-6 rounded-full transition-colors ${isPrivate ? 'bg-purple-500' : 'bg-white/20'}`}
+                >
+                    <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform ${isPrivate ? 'translate-x-6' : ''}`} />
+                </button>
+            </div>
 
             {/* Кнопки */}
             <div className="flex gap-3">

@@ -93,6 +93,7 @@ export interface UserMedia {
   current_episode: number;
   user_rating: number | null;
   notes: string | null;
+  is_private: boolean;
   created_at: string;
   updated_at: string;
 }

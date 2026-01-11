@@ -16,6 +16,7 @@ export default function QuickStatusEditor({ media, userMedia, onClose }: QuickSt
     const router = useRouter();
     const [status, setStatus] = useState<WatchStatus>(userMedia?.status || 'planned');
     const [rating, setRating] = useState<number | null>(userMedia?.user_rating || null);
+    const [isPrivate, setIsPrivate] = useState(userMedia?.is_private || false);
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSave = async () => {
@@ -47,7 +48,8 @@ export default function QuickStatusEditor({ media, userMedia, onClose }: QuickSt
                 status,
                 finalSeason,
                 finalEpisode,
-                rating
+                rating,
+                isPrivate
             );
             router.refresh();
             onClose();
@@ -120,6 +122,23 @@ export default function QuickStatusEditor({ media, userMedia, onClose }: QuickSt
                         )}
                     </div>
                 )}
+
+                {/* Приватность */}
+                <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl mb-4">
+                    <div className="flex items-center gap-2">
+                        <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                        <span className="text-white/80 text-sm">Скрыть</span>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => setIsPrivate(!isPrivate)}
+                        className={`relative w-10 h-5 rounded-full transition-colors ${isPrivate ? 'bg-purple-500' : 'bg-white/20'}`}
+                    >
+                        <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform ${isPrivate ? 'translate-x-5' : ''}`} />
+                    </button>
+                </div>
 
                 {/* Кнопки */}
                 <div className="flex gap-2">
