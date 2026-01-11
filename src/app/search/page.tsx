@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { getImageUrl, getMediaTitle, getMediaYear, getMediaDetails } from '@/lib/tmdb';
@@ -8,7 +8,7 @@ import { addToLibrary } from '@/actions/media';
 import type { TMDBSearchResult, TMDBMovieDetails, TMDBTVDetails, WatchStatus } from '@/types';
 import StatusSelector from '@/components/StatusSelector';
 
-export default function SearchPage() {
+function SearchContent() {
     const searchParams = useSearchParams();
     const query = searchParams.get('q') || '';
 
@@ -124,8 +124,8 @@ export default function SearchPage() {
 
                                     {/* Тип контента */}
                                     <div className={`absolute top-2 left-2 px-2 py-1 rounded-lg text-xs font-medium ${item.media_type === 'movie'
-                                        ? 'bg-blue-500/80 text-white'
-                                        : 'bg-purple-500/80 text-white'
+                                            ? 'bg-blue-500/80 text-white'
+                                            : 'bg-purple-500/80 text-white'
                                         }`}>
                                         {item.media_type === 'movie' ? 'Фильм' : 'Сериал'}
                                     </div>
@@ -232,6 +232,18 @@ export default function SearchPage() {
                 </div>
             )}
         </div>
+    );
+}
+
+export default function SearchPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen py-8 px-4 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent"></div>
+            </div>
+        }>
+            <SearchContent />
+        </Suspense>
     );
 }
 
