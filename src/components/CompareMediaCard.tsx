@@ -35,6 +35,7 @@ export default function CompareMediaCard({
                             src={getImageUrl(media.poster_path, 'w500')}
                             alt={media.title}
                             fill
+                            unoptimized
                             className="object-cover transition-transform duration-300 group-hover:scale-110"
                             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
                         />
@@ -44,8 +45,8 @@ export default function CompareMediaCard({
 
                         {/* Тип контента */}
                         <div className={`absolute top-3 left-3 px-2 py-1 rounded-lg text-xs font-medium ${media.media_type === 'movie'
-                                ? 'bg-blue-500/80 text-white'
-                                : 'bg-purple-500/80 text-white'
+                            ? 'bg-blue-500/80 text-white'
+                            : 'bg-purple-500/80 text-white'
                             }`}>
                             {media.media_type === 'movie' ? 'Фильм' : 'Сериал'}
                         </div>

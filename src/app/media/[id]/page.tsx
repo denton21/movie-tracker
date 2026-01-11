@@ -91,6 +91,7 @@ export default async function MediaDetailPage({ params }: Props) {
                     src={getBackdropUrl(details.backdrop_path, 'w1280')}
                     alt={title}
                     fill
+                    unoptimized
                     className="object-cover"
                     priority
                 />
@@ -107,6 +108,7 @@ export default async function MediaDetailPage({ params }: Props) {
                                 src={getImageUrl(details.poster_path, 'w500')}
                                 alt={title}
                                 fill
+                                unoptimized
                                 className="object-cover"
                             />
                         </div>
@@ -237,6 +239,7 @@ export default async function MediaDetailPage({ params }: Props) {
                                                 src={getImageUrl(season.poster_path, 'w185')}
                                                 alt={season.name}
                                                 fill
+                                                unoptimized
                                                 className="object-cover"
                                             />
                                         </div>

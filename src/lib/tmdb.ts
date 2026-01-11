@@ -85,8 +85,8 @@ export type BackdropSize = 'w300' | 'w780' | 'w1280' | 'original';
 /**
  * Получить полный URL изображения
  */
-export function getImageUrl(path: string | null, size: ImageSize = 'w500'): string {
-    if (!path) {
+export function getImageUrl(path: string | null | undefined, size: ImageSize = 'w500'): string {
+    if (!path || path.trim() === '') {
         return '/placeholder-poster.svg';
     }
     return `${TMDB_IMAGE_BASE}/${size}${path}`;

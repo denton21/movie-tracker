@@ -7,9 +7,10 @@ import type { TMDBSearchResult } from '@/types';
 
 interface SearchBarProps {
     onSelect: (item: TMDBSearchResult) => void;
+    onQueryChange?: (query: string) => void;
 }
 
-export default function SearchBar({ onSelect }: SearchBarProps) {
+export default function SearchBar({ onSelect, onQueryChange }: SearchBarProps) {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<TMDBSearchResult[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -66,7 +67,10 @@ export default function SearchBar({ onSelect }: SearchBarProps) {
                 <input
                     type="text"
                     value={query}
-                    onChange={(e) => setQuery(e.target.value)}
+                    onChange={(e) => {
+                        setQuery(e.target.value);
+                        onQueryChange?.(e.target.value);
+                    }}
                     placeholder="Поиск фильмов и сериалов..."
                     className="w-full px-6 py-4 text-lg bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                 />
@@ -99,6 +103,7 @@ export default function SearchBar({ onSelect }: SearchBarProps) {
                                     alt={getMediaTitle(item)}
                                     width={48}
                                     height={72}
+                                    unoptimized
                                     className="rounded-lg object-cover"
                                 />
                             </div>
@@ -110,8 +115,8 @@ export default function SearchBar({ onSelect }: SearchBarProps) {
                                 </p>
                                 <div className="flex items-center gap-2 text-sm text-white/60">
                                     <span className={`px-2 py-0.5 rounded text-xs ${item.media_type === 'movie'
-                                            ? 'bg-blue-500/20 text-blue-400'
-                                            : 'bg-purple-500/20 text-purple-400'
+                                        ? 'bg-blue-500/20 text-blue-400'
+                                        : 'bg-purple-500/20 text-purple-400'
                                         }`}>
                                         {item.media_type === 'movie' ? 'Фильм' : 'Сериал'}
                                     </span>

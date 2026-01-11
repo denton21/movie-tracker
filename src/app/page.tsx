@@ -15,6 +15,7 @@ export default function HomePage() {
   const [mediaDetails, setMediaDetails] = useState<TMDBMovieDetails | TMDBTVDetails | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleSelect = async (item: TMDBSearchResult) => {
     setSelectedMedia(item);
@@ -79,11 +80,11 @@ export default function HomePage() {
 
           {/* Поиск */}
           <div className="animate-fade-in-up delay-200">
-            <SearchBar onSelect={handleSelect} />
+            <SearchBar onSelect={handleSelect} onQueryChange={setSearchQuery} />
           </div>
 
           {/* Подсказка */}
-          <p className="mt-6 text-white/40 text-sm animate-fade-in-up delay-300">
+          <p className={`mt-6 text-white/40 text-sm animate-fade-in-up delay-300 select-none pointer-events-none transition-opacity duration-300 ${searchQuery ? 'opacity-0' : 'opacity-100'}`}>
             Введите название фильма или сериала для поиска
           </p>
         </div>
@@ -99,6 +100,7 @@ export default function HomePage() {
                 src={getImageUrl(selectedMedia.backdrop_path || selectedMedia.poster_path, 'w780')}
                 alt={getMediaTitle(selectedMedia)}
                 fill
+                unoptimized
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent" />
