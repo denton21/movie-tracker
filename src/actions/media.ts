@@ -346,9 +346,9 @@ export async function getUserLibraryStatusMap() {
 
     const statusMap: Record<string, WatchStatus> = {};
 
-    data.forEach((item) => {
-        // @ts-ignore - Типизация join в supabase иногда сложная
-        const media = item.media;
+    data.forEach((item: any) => {
+        const media = Array.isArray(item.media) ? item.media[0] : item.media;
+
         if (media && media.tmdb_id && media.media_type) {
             const key = `${media.media_type}-${media.tmdb_id}`;
             statusMap[key] = item.status;
