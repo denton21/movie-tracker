@@ -210,9 +210,20 @@ export default function SearchPage() {
                             </p>
 
                             <StatusSelector
-                                mediaType={selectedMedia.media_type}
-                                totalSeasons={(mediaDetails as TMDBTVDetails).number_of_seasons}
-                                totalEpisodes={(mediaDetails as TMDBTVDetails).number_of_episodes}
+                                media={{
+                                    id: selectedMedia.id, // Временный ID для типа
+                                    tmdb_id: selectedMedia.id,
+                                    media_type: selectedMedia.media_type,
+                                    title: getMediaTitle(selectedMedia),
+                                    poster_path: selectedMedia.poster_path,
+                                    backdrop_path: selectedMedia.backdrop_path,
+                                    release_year: getMediaYear(selectedMedia),
+                                    vote_average: selectedMedia.vote_average,
+                                    total_seasons: selectedMedia.media_type === 'tv' ? (mediaDetails as TMDBTVDetails).number_of_seasons : null,
+                                    total_episodes: selectedMedia.media_type === 'tv' ? (mediaDetails as TMDBTVDetails).number_of_episodes : null,
+                                    runtime: selectedMedia.media_type === 'movie' ? (mediaDetails as TMDBMovieDetails).runtime : (mediaDetails as TMDBTVDetails).episode_run_time?.[0] || null,
+                                    created_at: new Date().toISOString()
+                                }}
                                 onSave={handleSave}
                                 onCancel={() => setShowModal(false)}
                             />
