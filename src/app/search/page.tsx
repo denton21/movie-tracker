@@ -3,7 +3,8 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
-import { getImageUrl, getMediaTitle, getMediaYear, getMediaDetails } from '@/lib/tmdb';
+import { getImageUrl, getMediaTitle, getMediaYear } from '@/lib/tmdb';
+import { getMediaDetailsAction } from '@/actions/tmdb';
 import { addToLibrary } from '@/actions/media';
 import type { TMDBSearchResult, TMDBMovieDetails, TMDBTVDetails, WatchStatus } from '@/types';
 import StatusSelector from '@/components/StatusSelector';
@@ -14,6 +15,7 @@ function SearchContent() {
 
     const [results, setResults] = useState<TMDBSearchResult[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [isModalLoading, setIsModalLoading] = useState(false);
     const [selectedMedia, setSelectedMedia] = useState<TMDBSearchResult | null>(null);
     const [mediaDetails, setMediaDetails] = useState<TMDBMovieDetails | TMDBTVDetails | null>(null);
     const [showModal, setShowModal] = useState(false);
@@ -39,12 +41,16 @@ function SearchContent() {
 
     const handleSelect = async (item: TMDBSearchResult) => {
         setSelectedMedia(item);
+        setIsModalLoading(true);
         try {
-            const details = await getMediaDetails(item.id, item.media_type);
+            const details = await getMediaDetailsAction(item.id, item.media_type);
             setMediaDetails(details);
             setShowModal(true);
         } catch (error) {
             console.error('Ошибка загрузки деталей:', error);
+            // Можно добавить toast уведомление здесь
+        } finally {
+            setIsModalLoading(false);
         }
     };
 
@@ -83,6 +89,13 @@ function SearchContent() {
 
     return (
         <div className="min-h-screen py-8 px-4">
+            {/* Индикатор загрузки модального окна */}
+            {isModalLoading && (
+                <div className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent"></div>
+                </div>
+            )}
+
             <div className="max-w-7xl mx-auto">
                 {/* Заголовок */}
                 <div className="mb-8">
