@@ -5,7 +5,7 @@ import Navigation from "@/components/Navigation";
 import AsciiBackground from "@/components/AsciiBackground";
 
 const outfit = Outfit({
-  subsets: ["latin", "cyrillic"],
+  subsets: ["latin", "latin-ext"],
   variable: "--font-inter",
 });
 
