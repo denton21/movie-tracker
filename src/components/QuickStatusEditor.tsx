@@ -62,33 +62,38 @@ export default function QuickStatusEditor({ media, userMedia, onClose }: QuickSt
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-md animate-in fade-in duration-300"
             onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
         >
-            <div className="bg-gray-900 border border-white/10 rounded-2xl p-6 w-full max-w-sm animate-in fade-in zoom-in duration-200">
+            <div className="glass-panel border-white/10 rounded-3xl p-6 w-full max-w-sm animate-in zoom-in-95 duration-300 shadow-2xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none"></div>
+
                 {/* Заголовок */}
-                <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-white line-clamp-1">
+                <div className="flex items-start justify-between mb-6 relative z-10">
+                    <h3 className="text-xl font-bold text-slate-100 line-clamp-2 leading-tight pr-4">
                         {media.title}
                     </h3>
                     <button
                         onClick={onClose}
-                        className="text-white/60 hover:text-white transition-colors"
+                        className="text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-full p-1.5 transition-colors absolute -top-1 -right-1"
                     >
-                        ✕
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
                     </button>
                 </div>
 
                 {/* Быстрый выбор статуса */}
-                <div className="grid grid-cols-2 gap-2 mb-4">
+                <div className="grid grid-cols-2 gap-2 mb-5 relative z-10">
                     {(Object.entries(STATUS_CONFIG) as [WatchStatus, typeof STATUS_CONFIG[WatchStatus]][]).map(
                         ([key, config]) => (
                             <button
                                 key={key}
                                 onClick={() => setStatus(key)}
-                                className={`p-3 rounded-xl border-2 transition-all text-sm font-medium ${status === key
-                                    ? `${config.bgColor} border-current ${config.color}`
-                                    : 'border-white/10 text-white/60 hover:border-white/30'
+                                className={`p-3 rounded-xl border-2 transition-all duration-300 text-sm font-semibold tracking-wide uppercase shadow-sm ${status === key
+                                    ? `${config.bgColor} border-current ${config.color} shadow-[0_0_15px_rgba(currentcolor,0.2)] transform scale-[1.02]`
+                                    : 'bg-white/5 border-white/5 text-slate-400 hover:border-white/20 hover:text-slate-200 hover:bg-white/10'
                                     }`}
                             >
                                 {config.label}
@@ -99,59 +104,63 @@ export default function QuickStatusEditor({ media, userMedia, onClose }: QuickSt
 
                 {/* Быстрый выбор оценки (необязательно, для всех кроме "В планах") */}
                 {status !== 'planned' && (
-                    <div className="mb-4">
-                        <p className="text-white/60 text-sm mb-2">Оценка (необязательно)</p>
-                        <div className="flex gap-1 justify-center">
+                    <div className="mb-5 relative z-10 bg-black/20 p-4 rounded-2xl border border-white/5">
+                        <p className="text-slate-300 font-medium text-sm mb-3 text-center">Оценка <span className="text-slate-500 font-normal text-xs">(необязательно)</span></p>
+                        <div className="flex gap-1 justify-center flex-wrap">
                             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
                                 <button
                                     key={value}
                                     onClick={() => setRating(rating === value ? null : value)}
-                                    className={`w-8 h-8 rounded-lg text-sm font-medium transition-all ${rating !== null && value <= rating
-                                        ? 'bg-yellow-500 text-white'
-                                        : 'bg-white/10 text-white/60 hover:bg-white/20'
+                                    className={`w-8 h-8 rounded-lg text-sm font-bold transition-all duration-300 flex items-center justify-center border ${rating !== null && value <= rating
+                                        ? 'bg-amber-500 text-amber-950 border-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.3)] transform scale-105'
+                                        : 'bg-zinc-800/80 text-slate-400 border-white/5 hover:bg-zinc-700 hover:text-slate-200 hover:border-white/20'
                                         }`}
                                 >
                                     {value}
                                 </button>
                             ))}
                         </div>
-                        {rating && (
-                            <p className="text-center text-yellow-400 text-sm mt-2">
-                                ⭐ {rating}/10
-                            </p>
-                        )}
                     </div>
                 )}
 
                 {/* Приватность */}
-                <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl mb-4">
-                    <div className="flex items-center gap-2">
-                        <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
-                        <span className="text-white/80 text-sm">Скрыть</span>
+                <div className="flex items-center justify-between p-4 bg-zinc-900/50 border border-white/5 rounded-2xl mb-5 hover:bg-white-[0.03] transition-colors group cursor-pointer relative z-10" onClick={() => setIsPrivate(!isPrivate)}>
+                    <div className="flex items-center gap-3">
+                        <div className={`p-1.5 rounded-lg transition-colors ${isPrivate ? 'bg-indigo-500/20 text-indigo-400' : 'bg-white/5 text-slate-400 group-hover:text-slate-300'}`}>
+                            {isPrivate ? (
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                            ) : (
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                                </svg>
+                            )}
+                        </div>
+                        <div>
+                            <span className="text-slate-200 font-medium text-sm block">Скрыть</span>
+                        </div>
                     </div>
                     <button
                         type="button"
-                        onClick={() => setIsPrivate(!isPrivate)}
-                        className={`relative w-10 h-5 rounded-full transition-colors ${isPrivate ? 'bg-purple-500' : 'bg-white/20'}`}
+                        className={`relative w-12 h-6 rounded-full transition-colors duration-300 ${isPrivate ? 'bg-indigo-500' : 'bg-zinc-700'}`}
                     >
-                        <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform ${isPrivate ? 'translate-x-5' : ''}`} />
+                        <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 shadow-md ${isPrivate ? 'translate-x-6' : ''}`} />
                     </button>
                 </div>
 
                 {/* Кнопки */}
-                <div className="flex gap-2">
+                <div className="flex gap-3 relative z-10">
                     <button
                         onClick={onClose}
-                        className="flex-1 py-2.5 px-4 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-colors"
+                        className="flex-1 py-3 px-4 bg-zinc-800/80 border border-white/5 text-slate-300 rounded-xl hover:bg-zinc-700 hover:text-white hover:border-white/10 transition-all font-medium active:scale-[0.98]"
                     >
                         Отмена
                     </button>
                     <button
                         onClick={handleSave}
                         disabled={isLoading}
-                        className="flex-1 py-2.5 px-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+                        className="flex-1 py-3 px-4 bg-gradient-to-r from-rose-600 to-indigo-600 text-white rounded-xl font-bold tracking-wide hover:shadow-[0_0_15px_rgba(225,29,72,0.4)] transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 active:scale-[0.98] active:translate-y-0"
                     >
                         {isLoading ? '...' : 'Сохранить'}
                     </button>

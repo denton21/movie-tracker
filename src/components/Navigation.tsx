@@ -67,46 +67,52 @@ export default function Navigation() {
     };
 
     return (
-        <nav className="fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-xl border-b border-white/10">
+        <nav className="fixed top-0 left-0 right-0 z-50 glass border-b-0 border-white/5 shadow-2xl shadow-black/50 transition-all duration-300">
             <div className="max-w-7xl mx-auto px-4">
                 <div className="flex items-center justify-between h-16">
                     {/* Логотип */}
-                    <Link href="/" className="flex items-center gap-2">
-                        <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-red-500 rounded-xl flex items-center justify-center">
-                            <span className="text-xl">🎬</span>
+                    <Link href="/" className="flex items-center gap-2 group">
+                        <div className="w-10 h-10 bg-gradient-to-br from-rose-600 to-rose-400 rounded-xl flex items-center justify-center shadow-lg shadow-rose-500/20 group-hover:scale-105 transition-transform duration-300">
+                            <span className="text-xl drop-shadow-md">🎬</span>
                         </div>
-                        <span className="text-white font-bold text-xl hidden sm:inline">
+                        <span className="text-white font-bold text-xl hidden sm:inline tracking-tight">
                             MovieTracker
                         </span>
                     </Link>
 
                     {/* Навигация (десктоп) */}
-                    <div className="hidden md:flex items-center gap-1">
-                        {navLinks.map((link) => (
-                            <Link
-                                key={link.href}
-                                href={link.href}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${pathname === link.href
-                                    ? 'bg-red-500/20 text-red-400'
-                                    : 'text-white/60 hover:text-white hover:bg-white/5'
-                                    }`}
-                            >
-                                <link.icon className="w-5 h-5" />
-                                <span>{link.label}</span>
-                            </Link>
-                        ))}
+                    <div className="hidden md:flex items-center gap-2">
+                        {navLinks.map((link) => {
+                            const isActive = pathname === link.href;
+                            return (
+                                <Link
+                                    key={link.href}
+                                    href={link.href}
+                                    className={`relative flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 font-medium ${isActive
+                                            ? 'text-rose-400 bg-rose-500/10'
+                                            : 'text-slate-400 hover:text-white hover:bg-white/5'
+                                        }`}
+                                >
+                                    <link.icon className={`w-5 h-5 transition-transform duration-300 ${isActive ? 'scale-110' : ''}`} />
+                                    <span>{link.label}</span>
+                                    {isActive && (
+                                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-0.5 bg-rose-500 rounded-t-full shadow-[0_0_8px_rgba(244,63,94,0.8)]" />
+                                    )}
+                                </Link>
+                            );
+                        })}
                     </div>
 
                     {/* Пользователь */}
                     <div className="flex items-center gap-4">
                         {isLoading ? (
-                            <div className="w-20 h-8 bg-white/10 rounded-lg animate-pulse" />
+                            <div className="w-20 h-8 bg-white/5 rounded-lg animate-pulse" />
                         ) : user ? (
                             <div className="flex items-center gap-3">
-                                <span className="text-white/80 hidden sm:inline">{user.username}</span>
+                                <span className="text-slate-300 hidden sm:inline font-medium">{user.username}</span>
                                 <button
                                     onClick={handleLogout}
-                                    className="px-3 py-1.5 bg-white/10 text-white/80 rounded-lg text-sm hover:bg-white/20 transition-colors"
+                                    className="px-4 py-2 bg-white/5 text-slate-300 rounded-xl text-sm font-medium hover:bg-white/10 hover:text-white transition-all duration-300"
                                 >
                                     Выйти
                                 </button>
@@ -114,7 +120,7 @@ export default function Navigation() {
                         ) : (
                             <Link
                                 href="/login"
-                                className="px-4 py-2 bg-gradient-to-r from-red-600 to-red-500 text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
+                                className="px-5 py-2.5 btn-primary rounded-xl font-medium shadow-lg shadow-rose-500/20"
                             >
                                 Войти
                             </Link>
@@ -123,32 +129,38 @@ export default function Navigation() {
                         {/* Мобильное меню */}
                         <button
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className="md:hidden p-2 text-white/60 hover:text-white"
+                            className="md:hidden p-2 text-slate-400 hover:text-white transition-colors"
                         >
                             {isMenuOpen ? <CloseIcon className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
                         </button>
                     </div>
                 </div>
 
-                {/* Мобильное меню */}
-                {isMenuOpen && (
-                    <div className="md:hidden py-4 border-t border-white/10">
-                        {navLinks.map((link) => (
-                            <Link
-                                key={link.href}
-                                href={link.href}
-                                onClick={() => setIsMenuOpen(false)}
-                                className={`flex items-center gap-3 px-4 py-3 rounded-xl ${pathname === link.href
-                                    ? 'bg-red-500/20 text-red-400'
-                                    : 'text-white/60'
-                                    }`}
-                            >
-                                <link.icon className="w-5 h-5" />
-                                <span>{link.label}</span>
-                            </Link>
-                        ))}
+                {/* Мобильное меню (выпадающее) */}
+                <div
+                    className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-64 opacity-100 py-4 border-t border-white/10' : 'max-h-0 opacity-0'
+                        }`}
+                >
+                    <div className="flex flex-col gap-1">
+                        {navLinks.map((link) => {
+                            const isActive = pathname === link.href;
+                            return (
+                                <Link
+                                    key={link.href}
+                                    href={link.href}
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-medium ${isActive
+                                            ? 'bg-rose-500/10 text-rose-400'
+                                            : 'text-slate-400 hover:text-white hover:bg-white/5'
+                                        }`}
+                                >
+                                    <link.icon className="w-5 h-5" />
+                                    <span>{link.label}</span>
+                                </Link>
+                            );
+                        })}
                     </div>
-                )}
+                </div>
             </div>
         </nav>
     );

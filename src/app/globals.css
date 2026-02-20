@@ -1,36 +1,43 @@
 @import "tailwindcss";
 
 :root {
-  --font-inter: 'Inter', sans-serif;
-  --color-accent: #dc2626;
-  --color-accent-hover: #ef4444;
-  --color-accent-glow: rgba(220, 38, 38, 0.4);
+  --font-inter: 'Inter', system-ui, sans-serif;
+  --color-accent: #e11d48;
+  /* rose-600 */
+  --color-accent-hover: #f43f5e;
+  /* rose-500 */
+  --color-accent-glow: rgba(225, 29, 72, 0.35);
+  --color-bg-base: #09090b;
+  /* zinc-950 */
 }
 
 body {
-  font-family: var(--font-inter), system-ui, sans-serif;
-  background: #000000;
+  font-family: var(--font-inter);
+  background: var(--color-bg-base);
   min-height: 100vh;
-  color: #ffffff;
+  color: #f8fafc;
+  /* slate-50 */
+  overflow-x: hidden;
 }
 
 /* Кастомный скроллбар */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  border: 2px solid var(--color-bg-base);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 /* ==================== АНИМАЦИИ ==================== */
@@ -39,7 +46,7 @@ body {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(20px);
   }
 
   to {
@@ -52,7 +59,7 @@ body {
 @keyframes fadeInDown {
   from {
     opacity: 0;
-    transform: translateY(-30px);
+    transform: translateY(-20px);
   }
 
   to {
@@ -65,7 +72,7 @@ body {
 @keyframes scaleIn {
   from {
     opacity: 0;
-    transform: scale(0.9);
+    transform: scale(0.95);
   }
 
   to {
@@ -83,7 +90,7 @@ body {
   }
 
   50% {
-    opacity: 0.5;
+    opacity: 0.6;
   }
 }
 
@@ -96,7 +103,7 @@ body {
   }
 
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-8px);
   }
 }
 
@@ -105,11 +112,11 @@ body {
 
   0%,
   100% {
-    box-shadow: 0 0 20px var(--color-accent-glow);
+    box-shadow: 0 0 15px var(--color-accent-glow);
   }
 
   50% {
-    box-shadow: 0 0 40px var(--color-accent-glow), 0 0 60px var(--color-accent-glow);
+    box-shadow: 0 0 30px var(--color-accent-glow), 0 0 45px var(--color-accent-glow);
   }
 }
 
@@ -122,38 +129,38 @@ body {
   }
 
   25% {
-    transform: translateX(-5px);
+    transform: translateX(-4px);
   }
 
   75% {
-    transform: translateX(5px);
+    transform: translateX(4px);
   }
 }
 
 /* ==================== КЛАССЫ АНИМАЦИЙ ==================== */
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .animate-fade-in-down {
-  animation: fadeInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeInDown 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .animate-scale-in {
-  animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: scaleIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .animate-float {
-  animation: float 3s ease-in-out infinite;
+  animation: float 4s ease-in-out infinite;
 }
 
 .animate-glow {
-  animation: glow 2s ease-in-out infinite;
+  animation: glow 3s ease-in-out infinite;
 }
 
 .animate-pulse-slow {
-  animation: pulse 2s ease-in-out infinite;
+  animation: pulse 3s ease-in-out infinite;
 }
 
 /* Задержки анимаций */
@@ -181,37 +188,49 @@ body {
 
 /* Стили для карточек */
 .card-hover {
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .card-hover:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 30px var(--color-accent-glow);
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px var(--color-accent-glow);
 }
 
 /* Градиентный текст - красный */
 .gradient-text {
-  background: linear-gradient(135deg, #dc2626, #f87171, #fca5a5);
+  background: linear-gradient(135deg, #e11d48, #fb7185, #fecdd3);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Стеклянный эффект - тёмный */
+/* Стеклянный эффект - глубокий тёмный */
 .glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(24, 24, 27, 0.6);
+  /* zinc-900 с прозрачностью */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
 }
 
 .glass:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(39, 39, 42, 0.7);
+  /* zinc-800 */
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Легкое стекло для панелей */
+.glass-panel {
+  background: linear-gradient(145deg, rgba(24, 24, 27, 0.8), rgba(9, 9, 11, 0.9));
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 /* Свечение для активных элементов */
 .glow-red {
-  box-shadow: 0 0 30px var(--color-accent-glow);
+  box-shadow: 0 0 25px var(--color-accent-glow);
 }
 
 /* Кнопки с красным акцентом */
@@ -282,6 +301,7 @@ textarea:focus {
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-50%);
   }

@@ -55,22 +55,25 @@ export default function FriendsStatusTicker({ activities }: FriendsStatusTickerP
     if (activities.length === 0) return null;
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/5 bg-black/70 backdrop-blur-md">
-            <div className="relative flex items-center overflow-hidden h-10">
+        <div className="fixed bottom-0 left-0 right-0 z-40 glass border-t border-white/5 shadow-[0_-4px_20px_rgba(0,0,0,0.4)]">
+            <div className="relative flex items-center overflow-hidden h-12">
                 {/* Метка слева */}
-                <div className="flex-shrink-0 px-3 flex items-center gap-2 border-r border-white/10 h-full bg-black/50 z-10">
-                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                    <span className="text-white/50 text-xs font-medium uppercase tracking-wider whitespace-nowrap">
-                        Друзья
+                <div className="flex-shrink-0 px-4 flex items-center gap-2.5 border-r border-white/10 h-full bg-zinc-900/50 backdrop-blur-xl z-20 shadow-[4px_0_15px_rgba(0,0,0,0.2)]">
+                    <span className="relative flex h-2.5 w-2.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span>
+                    </span>
+                    <span className="text-slate-300 text-xs font-bold uppercase tracking-[0.2em] whitespace-nowrap pt-0.5">
+                        Лента
                     </span>
                 </div>
 
                 {/* Бегущая строка */}
-                <div className="flex-1 overflow-hidden relative">
+                <div className="flex-1 overflow-hidden relative h-full flex items-center">
                     {/* Градиент-маска слева */}
-                    <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-black/70 to-transparent z-10" />
+                    <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-zinc-950 to-transparent z-10" />
                     {/* Градиент-маска справа */}
-                    <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-black/70 to-transparent z-10" />
+                    <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-zinc-950 to-transparent z-10" />
 
                     <div
                         ref={trackRef}
@@ -80,29 +83,29 @@ export default function FriendsStatusTicker({ activities }: FriendsStatusTickerP
                         {items.map((activity, index) => (
                             <span
                                 key={`${activity.id}-${index}`}
-                                className="inline-flex items-center gap-1.5 px-5 text-sm"
+                                className="inline-flex items-center gap-2 px-6 text-sm group cursor-default"
                             >
                                 {/* Разделитель */}
-                                <span className="text-white/20 mr-1">•</span>
+                                <span className="text-white/10 mr-2 text-lg leading-none">•</span>
                                 {/* Аватар */}
-                                <span className="w-5 h-5 rounded-full bg-gradient-to-br from-pink-500 to-orange-500 flex items-center justify-center text-[10px] flex-shrink-0">
-                                    👤
+                                <span className="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-rose-500 flex items-center justify-center text-[11px] flex-shrink-0 shadow-sm border border-white/10 group-hover:scale-110 transition-transform">
+                                    <span className="drop-shadow-md">👤</span>
                                 </span>
                                 {/* Ник */}
-                                <span className="text-white/80 font-medium">{activity.username}</span>
+                                <span className="text-slate-200 font-bold group-hover:text-white transition-colors tracking-tight">{activity.username}</span>
                                 {/* Статус */}
-                                <span className={`${STATUS_COLOR[activity.status] || 'text-white/60'}`}>
+                                <span className={`font-medium ${STATUS_COLOR[activity.status] || 'text-slate-400'}`}>
                                     {STATUS_LABEL[activity.status] || activity.status}
                                 </span>
                                 {/* Эмодзи */}
-                                <span className="text-base leading-none">{STATUS_EMOJI[activity.status] || '📺'}</span>
+                                <span className="text-base leading-none drop-shadow-sm group-hover:-translate-y-0.5 transition-transform">{STATUS_EMOJI[activity.status] || '📺'}</span>
                                 {/* Название */}
-                                <span className="text-white/60 italic max-w-[200px] truncate">
+                                <span className="text-slate-300 font-medium max-w-[200px] truncate group-hover:text-white transition-colors">
                                     &laquo;{activity.title}&raquo;
                                 </span>
                                 {/* Тип */}
-                                <span className="text-white/30 text-xs">
-                                    {activity.media_type === 'movie' ? 'фильм' : 'сериал'}
+                                <span className="text-slate-500 text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-white/5 border border-white/5">
+                                    {activity.media_type === 'movie' ? 'ФИЛЬМ' : 'СЕРИАЛ'}
                                 </span>
                             </span>
                         ))}
