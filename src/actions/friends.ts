@@ -192,3 +192,64 @@ export async function selectFriendForCompare(friendId: string) {
 
     return { success: true };
 }
+
+/**
+ * Получить последние обновления статусов у друзей для бегущей строки
+ */
+export async function getFriendsActivity(limit = 20) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return [];
+
+    // Получаем ID всех друзей
+    const { data: friendRows } = await supabase
+        .from('friends')
+        .select('friend_id')
+        .eq('user_id', user.id);
+
+    if (!friendRows || friendRows.length === 0) return [];
+
+    const friendIds = friendRows.map((r: { friend_id: string }) => r.friend_id);
+
+    // Получаем последние публичные обновления статусов друзей
+    const { data, error } = await supabase
+        .from('user_media')
+        .select(`
+            id,
+            status,
+            updated_at,
+            profile:profiles(username),
+            media:media(title, media_type)
+        `)
+        .in('user_id', friendIds)
+        .eq('is_private', false)
+        .order('updated_at', { ascending: false })
+        .limit(limit);
+
+
+    if (error) {
+        console.error('getFriendsActivity error:', error);
+        return [];
+    }
+
+    // Нормализуем данные (Supabase может вернуть массив или объект в join)
+    return (data || []).map((row: {
+        id: number;
+        status: string;
+        updated_at: string;
+        profile: { username: string } | { username: string }[] | null;
+        media: { title: string; media_type: string } | { title: string; media_type: string }[] | null;
+    }) => {
+        const profile = Array.isArray(row.profile) ? row.profile[0] : row.profile;
+        const media = Array.isArray(row.media) ? row.media[0] : row.media;
+        return {
+            id: row.id,
+            username: profile?.username || 'Unknown',
+            status: row.status,
+            title: media?.title || '?',
+            media_type: media?.media_type || 'movie',
+            updated_at: row.updated_at,
+        };
+    });
+}

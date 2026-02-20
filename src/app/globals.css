@@ -275,3 +275,18 @@ textarea:focus {
   border-color: var(--color-accent) !important;
   box-shadow: 0 0 0 3px var(--color-accent-glow);
 }
+
+/* ==================== БЕГУЩАЯ СТРОКА ДРУЗЕЙ ==================== */
+
+@keyframes ticker {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-ticker {
+  animation: ticker linear infinite;
+}
