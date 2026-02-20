@@ -22,7 +22,6 @@ export default function MediaCard({
     const statusConfig = status ? STATUS_CONFIG[status] : null;
 
     return (
-    return (
         <Link
             href={`/media/${media.media_type}-${media.tmdb_id}`}
             className="group relative glass rounded-2xl overflow-hidden card-hover block h-full"
@@ -51,8 +50,8 @@ export default function MediaCard({
                 {/* Тип контента */}
                 <div className="absolute top-3 left-3 flex gap-2">
                     <div className={`px-2.5 py-1 rounded-lg text-xs font-semibold tracking-wide backdrop-blur-md border ${media.media_type === 'movie'
-                            ? 'bg-rose-500/20 text-rose-200 border-rose-500/30 shadow-[0_0_10px_rgba(225,29,72,0.2)]'
-                            : 'bg-indigo-500/20 text-indigo-200 border-indigo-500/30 shadow-[0_0_10px_rgba(99,102,241,0.2)]'
+                        ? 'bg-rose-500/20 text-rose-200 border-rose-500/30 shadow-[0_0_10px_rgba(225,29,72,0.2)]'
+                        : 'bg-indigo-500/20 text-indigo-200 border-indigo-500/30 shadow-[0_0_10px_rgba(99,102,241,0.2)]'
                         }`}>
                         {media.media_type === 'movie' ? 'ФИЛЬМ' : 'СЕРИАЛ'}
                     </div>
@@ -71,9 +70,9 @@ export default function MediaCard({
                     {/* Статус пользователя */}
                     {statusConfig && (
                         <div className={`px-3 py-2 rounded-xl backdrop-blur-md border shadow-lg ${status === 'watching' ? 'bg-blue-500/10 border-blue-500/20 text-blue-300' :
-                                status === 'completed' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300' :
-                                    status === 'planned' ? 'bg-amber-500/10 border-amber-500/20 text-amber-300' :
-                                        'bg-red-500/10 border-red-500/20 text-red-300'
+                            status === 'completed' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300' :
+                                status === 'planned' ? 'bg-amber-500/10 border-amber-500/20 text-amber-300' :
+                                    'bg-red-500/10 border-red-500/20 text-red-300'
                             }`}>
                             <div className="flex items-center justify-between gap-2">
                                 <span className={`text-xs font-semibold uppercase tracking-wider truncate flex-1`}>
@@ -130,7 +129,6 @@ export default function MediaCard({
                 </div>
             )}
         </Link>
-    );
     );
 }
 
